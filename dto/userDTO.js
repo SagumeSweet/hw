@@ -20,8 +20,17 @@ class UserResponseDTO {
     }
 }
 
+class UserLoginResponseDTO {
+    constructor(message, token, user) {
+        this.message = message;
+        this.token = token;
+        this.user = user;
+    }
+}
+
 module.exports = {
     UserRegisterDTO,
     UserLoginDTO,
     UserResponseDTO,
+    UserLoginResponseDTO
 };

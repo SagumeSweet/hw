@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs'); // 引入 bcrypt 库，用于密码加密和验证
 const userRepository = require('../repositories/userRepository'); // 引入用户数据仓库，处理数据库操作
 const { UserResponseDTO } = require('../dto/userDTO'); // 引入用户响应 DTO，用于规范化返回数据格式
+const jwt = require('jsonwebtoken'); // 引入 jsonwebtoken 库
 
 class UserService {
     // 用户注册方法
@@ -11,6 +12,8 @@ class UserService {
         // 调用用户仓库的 create 方法，插入新用户数据并返回用户对象
         const user = await userRepository.create(userRegisterDTO.email, hashedPassword, userRegisterDTO.username);
         
+        const token = jwt.sign({ id: user.id, email: user.email }, 'your_secret_key', { expiresIn: '1h' });
+
         // 返回注册成功的响应，包含用户信息
         return new UserResponseDTO("用户注册成功", {
             id: user.id,
