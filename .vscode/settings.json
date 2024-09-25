@@ -1,0 +1,25 @@
+{
+  "editor.formatOnSave": true, // 自动格式化保存时
+  "editor.tabSize": 4, // 使用 4 个空格进行缩进
+  "editor.insertSpaces": true, // 使用空格而不是制表符
+  "eslint.enable": true, // 启用 ESLint
+  "eslint.alwaysShowRuleFailuresAsWarnings": true, // 始终将 ESLint 规则失败显示为警告
+  "prettier.requireConfig": true, // 仅在项目中存在配置时使用 Prettier
+  "files.watcherExclude": {
+    "**/.git/objects/**": true, // 忽略 Git 对象的更改
+    "**/.git/subtree-cache/**": true // 忽略 Git 子树缓存的更改
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always" // 保存时自动修复 ESLint 问题
+  },
+  "javascript.format.enable": false, // 禁用默认的 JS 格式化
+  "typescript.format.enable": false, // 禁用默认的 TS 格式化
+  "files.autoSave": "afterDelay", // 自动保存文件
+  "files.autoSaveDelay": 2000, // 设置自动保存延迟为 1000 毫秒
+  "terminal.integrated.shell.windows": "C:\\Windows\\System32\\cmd.exe", // Windows 的命令行
+  "terminal.integrated.env.windows": {
+    "NODE_ENV": "development" // 在终端中设置 NODE_ENV
+  },
+  "debug.node.autoAttach": "on", // 自动附加调试器
+  "git.ignoreLimitWarning": true // 忽略 Git 跟踪限制警告
+}
