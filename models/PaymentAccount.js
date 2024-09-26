@@ -1,31 +1,27 @@
-// models/Content.js
+// models/PaymentAccount.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Content = sequelize.define('Content', {
+const PaymentAccount = sequelize.define('PaymentAccount', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
-    creator_id: {
+    user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    title: {
+    account_name: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    body: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-    },
-    visibility: {
-        type: DataTypes.ENUM('public', 'subscribers_only'),
+    account_info: {
+        type: DataTypes.STRING,
         allowNull: false,
     },
 }, {
     timestamps: true,
 });
 
-module.exports = Content;
+module.exports = PaymentAccount;

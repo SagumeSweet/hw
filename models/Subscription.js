@@ -1,31 +1,27 @@
-// models/Content.js
+// models/Subscription.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Content = sequelize.define('Content', {
+const Subscription = sequelize.define('Subscription', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
+    user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
     creator_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    body: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-    },
-    visibility: {
-        type: DataTypes.ENUM('public', 'subscribers_only'),
+    price: {
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
 }, {
     timestamps: true,
 });
 
-module.exports = Content;
+module.exports = Subscription;

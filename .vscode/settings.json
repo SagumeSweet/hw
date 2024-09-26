@@ -1,5 +1,6 @@
 {
   "editor.formatOnSave": true, // 自动格式化保存时
+  "editor.formatOnPaste": true,
   "editor.tabSize": 4, // 使用 4 个空格进行缩进
   "editor.insertSpaces": true, // 使用空格而不是制表符
   "eslint.enable": true, // 启用 ESLint

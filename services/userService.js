@@ -1,45 +1,79 @@
-const bcrypt = require('bcryptjs'); // 引入 bcrypt 库，用于密码加密和验证
-const userRepository = require('../repositories/userRepository'); // 引入用户数据仓库，处理数据库操作
-const { UserResponseDTO } = require('../dto/userDTO'); // 引入用户响应 DTO，用于规范化返回数据格式
-const jwt = require('jsonwebtoken'); // 引入 jsonwebtoken 库
+const bcrypt = require('bcryptjs');
+const userRepository = require('../repositories/userRepository');
+const { generateToken } = require('../utils/jwt'); // 导入 jwt 工具
 
 class UserService {
-    // 用户注册方法
-    async register(userRegisterDTO) {
-        // 使用 bcrypt 对密码进行加密，10 表示加密强度
-        const hashedPassword = await bcrypt.hash(userRegisterDTO.password, 10);
-        
-        // 调用用户仓库的 create 方法，插入新用户数据并返回用户对象
-        const user = await userRepository.create(userRegisterDTO.email, hashedPassword, userRegisterDTO.username);
-        
-        const token = jwt.sign({ id: user.id, email: user.email }, 'your_secret_key', { expiresIn: '1h' });
+    // 注册用户
+    async registerUser(userData) {
+        const existingUser = await userRepository.findUserByUsername(
+            userData.username
+        );
+        if (existingUser) {
+            throw new Error('用户已存在');
+        }
 
-        // 返回注册成功的响应，包含用户信息
-        return new UserResponseDTO("用户注册成功", {
-            id: user.id,
-            email: user.email,
-            username: user.username,
-        });
+        const hashedPassword = await bcrypt.hash(userData.password, 10);
+        const newUserData = {
+            ...userData,
+            password: hashedPassword,
+            avatar: 'default_avatar.png',
+            subscription_price: 0,
+        };
+        const user = await userRepository.createUser(newUserData);
+        return this.filterUserData(user);
     }
 
-    // 用户登录方法
-    async login(userLoginDTO) {
-        // 根据电子邮件查找用户
-        const user = await userRepository.findByEmail(userLoginDTO.email);
-        
-        // 验证用户是否存在，以及输入的密码是否与存储的密码匹配
-        if (!user || !(await bcrypt.compare(userLoginDTO.password, user.password))) {
-            throw new Error('邮箱不存在或密码错误'); // 抛出错误提示
+    // 登录用户
+    async loginUser(email, password) {
+        const user = await userRepository.findUserByEmail(email);
+
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            throw new Error('用户名或密码错误');
         }
-        
-        // 返回登录成功的响应，包含用户信息
-        return new UserResponseDTO("登录成功", {
-            id: user.id,
-            email: user.email,
-            username: user.username,
-        });
+
+        const token = generateToken(user.id); // 使用工具生成 JWT
+        return {
+            token, // 返回 JWT
+            user: this.filterUserData(user), // 返回用户信息
+        };
+    }
+
+    // 根据用户ID获取用户信息
+    async getUserById(id) {
+        const user = await userRepository.findUserById(id);
+        if (!user) {
+            throw new Error('用户不存在');
+        }
+
+        return this.filterUserData(user);
+    }
+
+    // 更新用户信息
+    async updateUser(id, data) {
+        const user = await userRepository.updateUser(id, data);
+        return this.filterUserData(user);
+    }
+
+    // 筛选用户信息
+    filterUserData(user) {
+        if (user.role === 'normal') {
+            return {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                avatar: user.avatar,
+            };
+        } else {
+            return {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+                avatar: user.avatar,
+                subscription_price: user.subscription_price,
+            };
+        }
     }
 }
 
-// 导出 UserService 实例，供其他模块使用
 module.exports = new UserService();
