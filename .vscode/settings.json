@@ -16,7 +16,7 @@
   "javascript.format.enable": false, // 禁用默认的 JS 格式化
   "typescript.format.enable": false, // 禁用默认的 TS 格式化
   "files.autoSave": "afterDelay", // 自动保存文件
-  "files.autoSaveDelay": 2000, // 设置自动保存延迟为 1000 毫秒
+  "files.autoSaveDelay": 1000, // 设置自动保存延迟为 1000 毫秒
   "terminal.integrated.shell.windows": "C:\\Windows\\System32\\cmd.exe", // Windows 的命令行
   "terminal.integrated.env.windows": {
     "NODE_ENV": "development" // 在终端中设置 NODE_ENV

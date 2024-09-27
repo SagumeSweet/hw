@@ -19,7 +19,7 @@ class UserRepository {
     }
 
     async updateUser(id, data) {
-        return await User.update(data, { where: { id } });
+        return await User.update(data, { where: { id }, returning: true });
     }
 
     async deleteUser(id) {

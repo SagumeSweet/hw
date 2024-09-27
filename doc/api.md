@@ -10,6 +10,7 @@
 
   ```json
   {
+    "email": "",
     "username": "string",
     "password": "string",
     "email": "string"
@@ -41,7 +42,7 @@
 
   ```json
   {
-    "username": "string",
+    "email": "string",
     "password": "string"
   }
   ```
@@ -51,7 +52,9 @@
 
     ```json
     {
-      "token": "jwt_token"
+      "token": "jwt_token",
+      "user": {
+      }
     }
     ```
 

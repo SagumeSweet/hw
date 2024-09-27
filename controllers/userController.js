@@ -22,9 +22,18 @@ class UserController {
         }
     }
 
-    async getUserInfo(req, res) {
+    async getSelfInfo(req, res) {
         try {
-            const user = await userService.getUserById(req.user.userId); // 假设 req.user 已通过中间件设置
+            const user = await userService.getUserById(req.user.id); // 假设 req.user 已通过中间件设置
+            return res.status(200).json(user);
+        } catch (error) {
+            return res.status(404).json({ message: error.message });
+        }
+    }
+
+    async getUserById(req, res) {
+        try {
+            const user = await userService.getUserById(req.params.id);
             return res.status(200).json(user);
         } catch (error) {
             return res.status(404).json({ message: error.message });
@@ -33,8 +42,8 @@ class UserController {
 
     async updateUser(req, res) {
         try {
-            await userService.updateUser(req.user.userId, req.body);
-            return res.sendStatus(200);
+            const newUserInfo = await userService.updateUser(req.user.id, req.body);
+            return res.status(200).json(newUserInfo);
         } catch (error) {
             return res.status(400).json({ message: error.message });
         }

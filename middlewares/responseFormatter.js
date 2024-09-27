@@ -3,6 +3,7 @@
 const responseFormatter = (req, res, next) => {
     // 存储原始的 res.json 方法
     const originalJson = res.json.bind(res);
+
     // 重写 res.json 方法
     res.json = (data) => {
         const message = data.message;
@@ -16,7 +17,7 @@ const responseFormatter = (req, res, next) => {
         };
         return originalJson(response); // 调用原始的 res.json 方法返回封装后的响应
     };
-
+    
     next(); // 继续处理请求
 };
 

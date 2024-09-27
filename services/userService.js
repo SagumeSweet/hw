@@ -9,7 +9,13 @@ class UserService {
             userData.username
         );
         if (existingUser) {
-            throw new Error('用户已存在');
+            throw new Error('用户名已存在');
+        }
+        const existingEmail = await userRepository.findUserByEmail(
+            userData.email
+        );
+        if (existingEmail) {
+            throw new Error('邮箱已存在');
         }
 
         const hashedPassword = await bcrypt.hash(userData.password, 10);
@@ -33,7 +39,7 @@ class UserService {
 
         const token = generateToken(user.id); // 使用工具生成 JWT
         return {
-            token, // 返回 JWT
+            token: token, // 返回 JWT
             user: this.filterUserData(user), // 返回用户信息
         };
     }
@@ -50,6 +56,11 @@ class UserService {
 
     // 更新用户信息
     async updateUser(id, data) {
+        if (data.password) {
+            throw new Error('密码用访问专用接口更新');
+        } else if (data.email) {
+            throw new Error('邮箱不可更新');
+        }
         const user = await userRepository.updateUser(id, data);
         return this.filterUserData(user);
     }
@@ -60,6 +71,7 @@ class UserService {
             return {
                 id: user.id,
                 username: user.username,
+                role: user.role,
                 email: user.email,
                 avatar: user.avatar,
             };

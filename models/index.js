@@ -8,30 +8,30 @@ const PaymentOrder = require('./PaymentOrder');
 const TransactionRecord = require('./TransactionRecord');
 
 // 定义关系
-User.hasMany(Follow, { foreignKey: 'userId' });
-User.hasMany(Subscription, { foreignKey: 'userId' });
-User.hasMany(Favorite, { foreignKey: 'userId' });
-User.hasMany(Content, { foreignKey: 'creatorId' });
-User.hasMany(PaymentAccount, { foreignKey: 'userId' });
-User.hasMany(PaymentOrder, { foreignKey: 'userId' });
-User.hasMany(TransactionRecord, { foreignKey: 'userId' });
+User.hasMany(Follow, { foreignKey: 'user_id' });
+User.hasMany(Subscription, { foreignKey: 'user_id' });
+User.hasMany(Favorite, { foreignKey: 'user_id' });
+User.hasMany(Content, { foreignKey: 'creator_id' });
+User.hasMany(PaymentAccount, { foreignKey: 'user_id' });
+User.hasMany(PaymentOrder, { foreignKey: 'user_id' });
+User.hasMany(TransactionRecord, { foreignKey: 'user_id' });
 
-Follow.belongsTo(User, { foreignKey: 'userId' });
-Follow.belongsTo(User, { foreignKey: 'creatorId' });
+Follow.belongsTo(User, { foreignKey: 'user_id' });
+Follow.belongsTo(User, { foreignKey: 'creator_id' });
 
-Subscription.belongsTo(User, { foreignKey: 'userId' });
-Subscription.belongsTo(User, { foreignKey: 'creatorId' });
+Subscription.belongsTo(User, { foreignKey: 'user_id' });
+Subscription.belongsTo(User, { foreignKey: 'creator_id' });
 
-Favorite.belongsTo(User, { foreignKey: 'userId' });
+Favorite.belongsTo(User, { foreignKey: 'user_id' });
 Favorite.belongsTo(Content, { foreignKey: 'contentId' });
 
-Content.belongsTo(User, { foreignKey: 'creatorId' });
+Content.belongsTo(User, { foreignKey: 'creator_id' });
 
-PaymentOrder.belongsTo(User, { foreignKey: 'userId' });
-PaymentOrder.belongsTo(User, { foreignKey: 'creatorId' });
-PaymentOrder.belongsTo(PaymentAccount, { foreignKey: 'paymentAccountId' });
+PaymentOrder.belongsTo(User, { foreignKey: 'user_id' });
+PaymentOrder.belongsTo(User, { foreignKey: 'creator_id' });
+PaymentOrder.belongsTo(PaymentAccount, { foreignKey: 'payment_account_id' });
 
-TransactionRecord.belongsTo(User, { foreignKey: 'userId' });
+TransactionRecord.belongsTo(User, { foreignKey: 'user_id' });
 
 module.exports = {
     User,

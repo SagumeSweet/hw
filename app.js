@@ -1,8 +1,10 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const sequelize = require('./config/database');
 const userRoutes = require('./routes/userRoutes');
+const followRoutes = require('./routes/followRoutes');
+const paymentAccountRoutes = require('./routes/paymentAccountRoutes');
+const paymentOrderRoutes = require('./routes/paymentOrderRoutes');
 const responseFormatter = require('./middlewares/responseFormatter');
 var logger = require('morgan');
 
@@ -13,7 +15,10 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(responseFormatter);
 
-app.use('/api/user', userRoutes);
+app.use('/api', userRoutes);
+app.use('/api', followRoutes);
+app.use('/api', paymentAccountRoutes);
+app.use('/api', paymentOrderRoutes);
 
 // 同步数据库并启动服务器
 sequelize
