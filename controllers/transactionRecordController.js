@@ -1,7 +1,7 @@
 // controllers/transactionController.js
 const transactionRecordService = require('../services/transactionRecordService');
 
-class TransactionController {
+class TransactionRecordController {
     async getTransactionsRecordByUserId(req, res) {
         try {
             const userId = req.user.id;
@@ -16,4 +16,4 @@ class TransactionController {
     }
 }
 
-module.exports = new TransactionController();
+module.exports = new TransactionRecordController();

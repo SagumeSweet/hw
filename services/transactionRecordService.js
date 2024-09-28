@@ -1,28 +1,44 @@
 // services/transactionService.js
 const transactionRecordRepository = require('../repositories/transactionRecordRepository');
+const paymentOrderService = require('./paymentOrderService');
 
 class TransactionRecordService {
-    async createTransactionRecord(orderData) {
+    async createTransactionRecord(orderId) {
+        const orderData = await paymentOrderService.getPaymentOrdersById(
+            orderId
+        );
         if (orderData.status === 'pending') {
             throw new Error('订单未结束');
         }
 
         const incomeData = {
-            user_id: orderData.userId,
+            user_id: orderData.creatorId,
             type: 'income',
             amount: orderData.amount,
-            description: 'null',
+            description: orderData.description,
+            createdAt: orderData.createdAt,
+            closedAt: orderData.updatedAt,
         };
         const expense = {
-            user_id: orderData.creatorId,
+            user_id: orderData.userId,
             type: 'expense',
             amount: orderData.amount,
-            description: 'null',
+            description: orderData.description,
+            createdAt: orderData.createdAt,
+            closedAt: orderData.updatedAt,
         };
-
-        await transactionRecordRepository.createTransaction(incomeData);
-        await transactionRecordRepository.createTransaction(expense);
-        return orderData.status === 'completed';
+        return {
+            income: this.mapping(
+                await transactionRecordRepository.createTransactionRecord(
+                    incomeData
+                )
+            ),
+            expense: this.mapping(
+                await transactionRecordRepository.createTransactionRecord(
+                    expense
+                )
+            ),
+        };
     }
 
     async getTransactionsRecordByUserId(userId) {
@@ -30,7 +46,7 @@ class TransactionRecordService {
             await transactionRecordRepository.getTransactionsRecordByUserId(
                 userId
             );
-        if (!transactionRecords) {
+        if (transactionRecords.length === 0) {
             throw new Error('无记录');
         }
         return transactionRecords.map(this.mapping);

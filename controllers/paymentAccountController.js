@@ -2,14 +2,14 @@ const paymentAccountService = require('../services/paymentAccountService');
 
 class PaymentAccountController {
     async create(req, res) {
-        const { account_name, account_info } = req.body;
+        const { accountName, accountInfo } = req.body;
         const userId = req.user.id;
         try {
             const paymentAccount =
                 await paymentAccountService.createPaymentAccount(
                     userId,
-                    account_name,
-                    account_info
+                    accountName,
+                    accountInfo
                 );
             return res.status(201).json(paymentAccount);
         } catch (error) {
@@ -30,9 +30,10 @@ class PaymentAccountController {
 
     async delete(req, res) {
         const { id } = req.params;
+        const userId = req.user.id;
         try {
-            await paymentAccountService.deletePaymentAccount(id);
-            return res.status(204).json({ message: '支付账号删除成功' });
+            await paymentAccountService.deletePaymentAccount(userId, id);
+            return res.status(200).json({ message: '支付账号删除成功' });
         } catch (error) {
             return res.status(400).json({ message: error.message });
         }

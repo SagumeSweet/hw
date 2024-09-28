@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const userRepository = require('../repositories/userRepository');
+const paymentAccountService = require('./paymentAccountService');
 const { generateToken } = require('../utils/jwt'); // 导入 jwt 工具
+const { Type } = require('class-transformer');
 
 class UserService {
     // 注册用户
@@ -48,7 +50,7 @@ class UserService {
     async getUserById(id) {
         const user = await userRepository.findUserById(id);
         if (!user) {
-            throw new Error('用户不存在');
+            throw new Error(`id=${id} 用户不存在`);
         }
 
         return this.filterUserData(user);
@@ -60,9 +62,41 @@ class UserService {
             throw new Error('密码用访问专用接口更新');
         } else if (data.email) {
             throw new Error('邮箱不可更新');
+        } else if (data.role) {
+            throw new Error('更新角色用专用接口');
         }
         const user = await userRepository.updateUser(id, data);
         return this.filterUserData(user);
+    }
+
+    async updateRole(id, role, price) {
+        const user = await userRepository.findUserById(id);
+        console.log(price);
+        if (user.role === role) {
+            throw new Error(`用户角色已是${role}`);
+        }
+        if (role === 'creator') {
+            if (
+                (await paymentAccountService.getUserPaymentAccounts(id))
+                    .length === 0
+            ) {
+                throw new Error('无支付账户');
+            }
+            if (!price || price <= 0) {
+                throw new Error('价格设置错误');
+            }
+            await userRepository.updateUser(id, {
+                role: role,
+                subscription_price: price,
+            });
+        } else if (role === 'normal') {
+            await userRepository.updateUser(id, {
+                role,
+                subscription_price: 0,
+            });
+        } else {
+            throw new Error('参数错误');
+        }
     }
 
     // 筛选用户信息
@@ -82,7 +116,7 @@ class UserService {
                 email: user.email,
                 role: user.role,
                 avatar: user.avatar,
-                subscription_price: user.subscription_price,
+                price: user.subscription_price,
             };
         }
     }

@@ -11,12 +11,14 @@ class PaymentOrderRepository {
     }
 
     async getPendingOrdersByUserId(userId) {
-        return await PaymentOrder.findAll({ where: { user_id: userId , status: 'pending'} });
+        return await PaymentOrder.findAll({
+            where: { user_id: userId, status: 'pending' },
+        });
     }
 
-
     async updateOrder(id, data) {
-        return await PaymentOrder.update(data, { where: { id } });
+        await PaymentOrder.update(data, { where: { id } });
+        return await this.getOrderById(id);
     }
 }
 

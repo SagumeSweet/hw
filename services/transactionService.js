@@ -1,30 +1,42 @@
 const paymentAccountService = require('./paymentAccountService');
 const paymentOrderService = require('./paymentOrderService');
 const transactionRecordService = require('./transactionRecordService');
+const subscriptionService = require('./subscriptionService');
 
 class TransactionService {
-    async pay(orderId) {
-        const orderData = await paymentOrderService.getPaymentOrdersById(
+    async pay(orderId, userId) {
+        const oldOrderData = await paymentOrderService.getPaymentOrdersById(
             orderId
         );
+        if (oldOrderData.userId !== userId) {
+            throw new Error('非法操作');
+        }
         const incomeAccount =
             await paymentAccountService.getDefaultPaymentAccountByUserId(
-                orderData.creatorId
+                oldOrderData.creatorId
             );
         const expenseAccount =
             await paymentAccountService.getPaymentAccountById(
-                orderData.paymentAccountId
+                oldOrderData.paymentAccountId
             );
-
-        if (this.payApi(incomeAccount, expenseAccount)) {
-            paymentOrderService.updatePaymentOrder(orderId, 'completed');
+        const is_success = this.payApi(incomeAccount, expenseAccount);
+        if (is_success) {
+            const newOrderData = await paymentOrderService.updatePaymentOrder(
+                orderId,
+                'completed'
+            );
+            await transactionRecordService.createTransactionRecord(orderId);
+            // 创建订阅
+            await subscriptionService.createSubscriptionAfterPayment(
+                newOrderData.userId,
+                newOrderData.creatorId,
+                newOrderData.month
+            );
         } else {
-            paymentOrderService.updatePaymentOrder(orderId, 'failed');
+            await paymentOrderService.updatePaymentOrder(orderId, 'failed');
+            throw new Error('支付失败');
         }
-
-        return await transactionRecordService.createTransactionRecord(
-            orderData
-        );
+        return { message: '支付成功' };
     }
 
     payApi(incomeAccount, expenseAccount) {

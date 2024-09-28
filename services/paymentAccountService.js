@@ -9,11 +9,12 @@ class PaymentAccountService {
         };
 
         if (
-            !(await paymentAccountRepository.getPaymentAccountsByUserId(userId))
+            (await paymentAccountRepository.getPaymentAccountsByUserId(userId)).length === 0
         ) {
-            paymentAccountData.is_default = true;
+            paymentAccountData.isDefault = true;
+        } else {
+            paymentAccountData.isDefault = false;
         }
-        console.log(paymentAccountData)
         const newAccount = await paymentAccountRepository.createPaymentAccount(
             paymentAccountData
         );
@@ -49,7 +50,16 @@ class PaymentAccountService {
         return dto;
     }
 
-    async deletePaymentAccount(id) {
+    async deletePaymentAccount(userId, id) {
+        const account = await paymentAccountRepository.getPaymentAccountById(
+            id
+        );
+        if (!account) {
+            throw new Error('账户不存在');
+        } else if (account.user_id !== userId) {
+            throw new Error('无权操作');
+        }
+
         return await paymentAccountRepository.deletePaymentAccount(id);
     }
 
@@ -61,11 +71,13 @@ class PaymentAccountService {
             throw new Error('非法操作');
         }
         const oldDefault = await this.getDefaultPaymentAccountByUserId(userId);
-        await paymentAccountRepository.updatePaymentAccount(oldDefault.id, {
-            is_default: false,
-        });
+        if (oldDefault) {
+            await paymentAccountRepository.updatePaymentAccount(oldDefault.id, {
+                isDefault: false,
+            });
+        }
         await paymentAccountRepository.updatePaymentAccount(id, {
-            is_default: true,
+            isDefault: true,
         });
     }
 
@@ -77,7 +89,7 @@ class PaymentAccountService {
             id: account.id,
             accountName: account.account_name,
             accountInfo: account.account_info,
-            isDefault: account.is_default,
+            isDefault: account.isDefault ? 'true' : 'false',
         };
     }
 }

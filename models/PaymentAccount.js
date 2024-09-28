@@ -28,15 +28,6 @@ const PaymentAccount = sequelize.define(
         },
     },
     {
-        indexes: [
-            {
-                unique: true,
-                fields: ['user_id'],
-                where: {
-                    isDefault: true,
-                },
-            },
-        ],
         timestamps: true,
     }
 );

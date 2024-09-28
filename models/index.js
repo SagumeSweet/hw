@@ -25,7 +25,7 @@ Subscription.belongsTo(User, { foreignKey: 'creator_id' });
 Favorite.belongsTo(User, { foreignKey: 'user_id' });
 Favorite.belongsTo(Content, { foreignKey: 'contentId' });
 
-Content.belongsTo(User, { foreignKey: 'creator_id' });
+Content.belongsTo(User, { foreignKey: 'creator_id', as: 'creator' });
 
 PaymentOrder.belongsTo(User, { foreignKey: 'user_id' });
 PaymentOrder.belongsTo(User, { foreignKey: 'creator_id' });

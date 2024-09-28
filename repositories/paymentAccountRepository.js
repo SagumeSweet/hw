@@ -15,7 +15,7 @@ class PaymentAccountRepository {
 
     async getDefaultPaymentAccountsByUserId(userId) {
         return await PaymentAccount.findAll({
-            where: { user_id: userId, is_default: true },
+            where: { user_id: userId, isDefault: true },
         });
     }
 
@@ -28,7 +28,8 @@ class PaymentAccountRepository {
     }
 
     async updatePaymentAccount(id, data) {
-        return await PaymentAccount.update(data, { where: { id } });
+        await PaymentAccount.update(data, { where: { id } });
+        return await this.getPaymentAccountById(id);
     }
 }
 
