@@ -22,6 +22,15 @@ class UserController {
         }
     }
 
+    async getUserByIdFromPublic(req, res) {
+        try {
+            const user = await userService.getUserById(req.params.id);
+            return res.status(200).json(user);
+        } catch (error) {
+            return res.status(404).json({ message: error.message });
+        }
+    }
+
     async getSelfInfo(req, res) {
         try {
             const user = await userService.getUserById(req.user.id); // 假设 req.user 已通过中间件设置

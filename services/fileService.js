@@ -1,7 +1,8 @@
-// services/fileService.js
+const path = require('path');
 const fileRepository = require('../repositories/fileRepository');
 const contentService = require('./contentService');
 const userService = require('./userService');
+const { v4: uuidv4 } = require('uuid'); // 用于生成唯一文件名
 
 class FileService {
     // 上传头像
@@ -15,9 +16,20 @@ class FileService {
             throw new Error('无效的文件类型或大小');
         }
 
-        // 保存头像路径
-        await userService.updateUser(userId, { avatar: file });
-        return;
+        // 根据文件类型生成文件夹路径和文件名
+        const folderPath = 'avatars';
+        const fileName = this.generateFileName(file.originalname);
+
+        // 保存文件到特定文件夹
+        const filePath = await fileRepository.saveFile(
+            file,
+            path.join(folderPath, fileName)
+        );
+
+        // 保存头像路径到用户信息
+        await userService.updateUser(userId, { avatar: filePath });
+
+        return filePath;
     }
 
     // 上传内容文件
@@ -41,18 +53,27 @@ class FileService {
             'video/avi': 'video',
         };
 
-        const maxSize = 100 * 1024 * 1024; // 100MB
-        if (file.size > maxSize) {
-            throw new Error('文件大小超出限制');
+
+        // 根据文件类型确定文件夹
+        const fileType = validTypes[file.mimetype];
+        if (!fileType) {
+            throw new Error('不支持的文件类型');
         }
 
-        // 保存内容文件
-        const filePath = await fileRepository.saveFile(file);
+        const folderPath =
+            fileType === 'image' ? 'contents/images' : 'contents/videos';
+        const fileName = this.generateFileName(file.originalname);
+
+        // 保存文件到指定文件夹
+        const filePath = await fileRepository.saveFile(
+            file,
+            path.join(folderPath, fileName)
+        );
 
         // 返回文件路径和类型
         return {
             filePath,
-            fileType: validTypes[file.mimetype], // 文件类型
+            fileType,
         };
     }
 
@@ -64,7 +85,8 @@ class FileService {
         }
 
         const filePath = user.avatar;
-        return await fileRepository.getFile(filePath);
+        // return await fileRepository.getFile(filePath);
+        return filePath
     }
 
     // 发送内容媒体
@@ -74,7 +96,8 @@ class FileService {
             throw new Error('内容未找到');
         }
         if (content.mediaUrl) {
-            return await fileRepository.getFile(content.mediaUrl);
+            // return await fileRepository.getFile(content.mediaUrl);
+            return content.mediaUrl
         }
         throw new Error('无权访问该内容');
     }
@@ -89,6 +112,12 @@ class FileService {
         const mimetype = allowedTypes.test(file.mimetype);
 
         return extname && mimetype && file.size <= maxSize;
+    }
+
+    // 生成唯一文件名，避免重复
+    generateFileName(originalName) {
+        const fileExt = path.extname(originalName).toLowerCase(); // 提取文件扩展名
+        return `${uuidv4()}${fileExt}`; // 生成唯一文件名
     }
 }
 

@@ -21,7 +21,7 @@ router.post(
     fileController.uploadContent
 );
 
-router.get('/uploaded/avatar/:id', authenticate, fileController.getAvatar);
+router.get('/uploaded/avatar/:id', fileController.getAvatar);
 router.get(
     '/uploaded/content/:contentId',
     authenticate,

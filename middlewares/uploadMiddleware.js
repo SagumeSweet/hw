@@ -1,4 +1,4 @@
-// middleware/uploadMiddleware.js
+// middlewares/uploadMiddleware.js
 const multer = require('multer');
 
 // 使用内存存储

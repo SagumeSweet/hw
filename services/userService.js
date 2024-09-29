@@ -56,6 +56,16 @@ class UserService {
         return this.filterUserData(user);
     }
 
+    async getUserByIdFromPublic(id) {
+        const user = await this.getUserById;
+        return {
+            id: user.id,
+            username: user.username,
+            role: user.role,
+            avatar: user.avatar,
+        }
+    }
+
     // 更新用户信息
     async updateUser(id, data) {
         if (data.password) {

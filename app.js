@@ -12,6 +12,8 @@ const transactionRoutes = require('./routes/transactionRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const contentRoutes = require('./routes/contentRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
+const fileRoutes = require('./routes/fileRoutes');
+
 
 const cors = require('cors');
 const responseFormatter = require('./middlewares/responseFormatter');
@@ -30,8 +32,9 @@ app.use(
         origin: '*', // 允许的来源
         methods: '*', // 允许所有方法
         allowedHeaders: '*', // 允许所有头部
-        credentials: true, // 允许发送凭据    })
-}));
+        credentials: true, // 允许发送凭据
+    })
+);
 
 // 添加路由
 app.use('/api', userRoutes);
@@ -43,6 +46,8 @@ app.use('/api', transactionRoutes);
 app.use('/api', subscriptionRoutes);
 app.use('/api', contentRoutes);
 app.use('/api', favoriteRoutes);
+app.use('/api', fileRoutes);
+
 
 // 同步数据库并启动服务器
 sequelize

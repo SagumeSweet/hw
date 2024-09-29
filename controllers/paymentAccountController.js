@@ -38,6 +38,17 @@ class PaymentAccountController {
             return res.status(400).json({ message: error.message });
         }
     }
+
+    async updateDefault(req, res) {
+        const { id } = req.params;
+        const userId = req.user.id;
+        try {
+            await paymentAccountService.updateDefaultAccount(Number(id), userId);
+            return res.status(200).json({ message: '默认支付账号更新成功' });
+        } catch (error) {
+            return res.status(400).json({ message: error.message });
+        }
+    }
 }
 
 module.exports = new PaymentAccountController();

@@ -9,7 +9,8 @@ class PaymentAccountService {
         };
 
         if (
-            (await paymentAccountRepository.getPaymentAccountsByUserId(userId)).length === 0
+            (await paymentAccountRepository.getPaymentAccountsByUserId(userId))
+                .length === 0
         ) {
             paymentAccountData.isDefault = true;
         } else {
@@ -33,14 +34,14 @@ class PaymentAccountService {
     }
 
     async getDefaultPaymentAccountByUserId(userId) {
-        const account =
+        const accounts =
             await paymentAccountRepository.getDefaultPaymentAccountsByUserId(
                 userId
             );
-        if (!account) {
-            throw new Error('无默认收款账号');
+        if (accounts.length !== 1) {
+            throw new Error('内部错误，多个默认账号或无默认账号');
         }
-        return this.formatPaymentAccountData(account);
+        return accounts.map(this.formatPaymentAccountData);
     }
 
     async getUserPaymentAccounts(userId) {
@@ -71,10 +72,17 @@ class PaymentAccountService {
             throw new Error('非法操作');
         }
         const oldDefault = await this.getDefaultPaymentAccountByUserId(userId);
-        if (oldDefault) {
-            await paymentAccountRepository.updatePaymentAccount(oldDefault.id, {
-                isDefault: false,
-            });
+        console.log(oldDefault[0].id)
+        console.log(id)
+        if ( oldDefault[0].id === id) {
+            throw new Error('该账号已为默认账号');
+        } else {
+            await paymentAccountRepository.updatePaymentAccount(
+                oldDefault[0].id,
+                {
+                    isDefault: false,
+                }
+            );
         }
         await paymentAccountRepository.updatePaymentAccount(id, {
             isDefault: true,
@@ -89,7 +97,7 @@ class PaymentAccountService {
             id: account.id,
             accountName: account.account_name,
             accountInfo: account.account_info,
-            isDefault: account.isDefault ? 'true' : 'false',
+            isDefault: account.isDefault,
         };
     }
 }
