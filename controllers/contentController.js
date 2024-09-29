@@ -8,13 +8,6 @@ class ContentController {
         try {
             const creatorId = req.user.id; // 需要登录，获取创作者的用户 ID
             const contentData = req.body;
-            // 文件上传后的 URL 和类型
-            if (req.file) {
-                contentData.media_url = req.file.path; // 文件存储路径
-                contentData.media_type = req.file.mimetype.startsWith('image')
-                    ? 'image'
-                    : 'video';
-            }
 
             const content = await contentService.createContent(
                 creatorId,

@@ -4,7 +4,7 @@ const orderController = require('../controllers/paymentOrderController');
 const { authenticate } = require('../middlewares/authMiddleware');
 
 router.get(
-    '/payment-orders',
+    '/user/payment-orders',
     authenticate,
     orderController.getPendingOrdersByUserId
 );

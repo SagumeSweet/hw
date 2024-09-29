@@ -9,7 +9,7 @@ router.post('/subscribe', authenticate, subscriptionController.subscribe);
 
 // 获取用户的订阅列表
 router.get(
-    '/subscriptions',
+    '/user/subscriptions',
     authenticate,
     subscriptionController.getUserSubscriptions
 );

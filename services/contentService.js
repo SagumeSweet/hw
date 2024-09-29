@@ -20,8 +20,8 @@ class ContentService {
             title: contentData.title,
             body: contentData.body,
             content_type: contentData.contentType,
-            media_url: contentData.media_url,
-            media_type: contentData.media_type,
+            media_url: contentData.mediaUrl,
+            media_type: contentData.mediaType,
         };
         const newContent = await contentRepository.createContent(
             newContentData
@@ -167,7 +167,7 @@ class ContentService {
         return {
             id: content.id,
             title: content.title,
-            content_type: content.content_type,
+            contentType: content.content_type,
             creator: {
                 id: content.creator.id,
                 username: content.creator.username,
@@ -180,9 +180,9 @@ class ContentService {
             id: content.id,
             title: content.title,
             body: content.body,
-            content_type: content.content_type,
-            media_url: content.media_url,
-            media_type: content.media_type,
+            contentType: content.content_type,
+            mediaUrl: content.media_url,
+            mediaType: content.media_type,
             creator: {
                 id: content.creator.id,
                 username: content.creator.username,

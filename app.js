@@ -13,6 +13,7 @@ const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const contentRoutes = require('./routes/contentRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
 
+const cors = require('cors');
 const responseFormatter = require('./middlewares/responseFormatter');
 var logger = require('morgan');
 
@@ -22,6 +23,15 @@ const app = express();
 app.use(logger('dev'));
 app.use(express.json());
 app.use(responseFormatter);
+
+// 跨域设置
+app.use(
+    cors({
+        origin: '*', // 允许的来源
+        methods: '*', // 允许所有方法
+        allowedHeaders: '*', // 允许所有头部
+        credentials: true, // 允许发送凭据    })
+}));
 
 // 添加路由
 app.use('/api', userRoutes);

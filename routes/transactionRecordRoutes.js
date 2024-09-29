@@ -4,7 +4,7 @@ const transactionRecordController = require('../controllers/transactionRecordCon
 const { authenticate } = require('../middlewares/authMiddleware');
 
 router.get(
-    '/transaction-record',
+    '/user/transaction-record',
     authenticate,
     transactionRecordController.getTransactionsRecordByUserId
 );
